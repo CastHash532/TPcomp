@@ -1,0 +1,11 @@
+(notre projet)
+flex -o lexic.c lexic.l && \
+bison -d gram.y && \
+gcc -o compiler.out lexic.c gram.tab.c && \
+./compiler.out
+
+(ancien projet)
+flex -o lexic.c prg.l && \
+bison -d prg.y && \
+gcc -o compiler.out lexic.c prg.tab.c && \
+./compiler.out

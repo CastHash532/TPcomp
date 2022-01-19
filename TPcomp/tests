@@ -1,0 +1,54 @@
+~ test.h !
+~ bib.h !
+~ anotherbib.h !
+
+LET max BE 12 !
+c
+
+
+
+
+function Num fon( Num b,Num a)  [
+b : Num! 
+
+a<-b! 
+return b! 
+]
+
+void proc(Str a) [
+
+b : Num! 
+a<-b! 
+]
+
+
+BEGIN
+[
+    a : Num ! 
+    b : Num ! 
+    c : Num ! 
+ 
+  putin(a)!
+    a <- b !
+    b <- 10 !
+    c <-   (10 * 1) - 1!
+   
+   from a = 0 to a = 10 with a++ [
+   c <- 1 !
+   ]
+    
+    as [
+    a <- a + 1 !
+    ] repeat ( a - 10 ) 
+    
+    
+    repeat ( a ) [
+    a <- a + 2 !
+    ]
+    putout( "hello" ) !
+    
+    ( a = 4 ) ? [
+    putout ( "exit" ) !
+    ]
+]
+END
