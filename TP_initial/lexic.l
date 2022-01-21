@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include "gram.tab.h"
 
-extern YYSTYPE yylval;
 
 
  int lineno = 1; // initialize to 1
@@ -36,7 +35,7 @@ ARITHMETIC         "+"|"-"|"*"|"/"|"%"
 
 SIGNS              "AND"|"OR"|"&"|"|"|">"|"<"|">="|"<="|"<-"|"&="|"="|")"|"("|"]"|"["|"}"|"["|"!"|","|"{"|"}"|":"        
 
-NUMBER             (\+|-)*{DIGIT}+(\.{1})?{DIGIT}+
+NUMBER        (\+|-)*{DIGIT}+(\.{1})?{DIGIT}+
 
 %%
 "print"             //printList();
@@ -88,14 +87,12 @@ NUMBER             (\+|-)*{DIGIT}+(\.{1})?{DIGIT}+
                   
                }
 {IMPORT}         {
-   strcpy(yylval.sval,yytext);
 			return TOKEN_IMPORTID;
                      //insertFirst(yytext,"IMPORT");	
 		}
 {IDENTIFIER}   {
                   if(yyleng<32){
                    //  printf("\nTOKEN_ID %s",yytext);
-                     strcpy(yylval.id,yytext);
                       return TOKEN_ID;
                 //     insertFirst(yytext,"IDENTIFIER",50);
                      }
@@ -113,15 +110,12 @@ NUMBER             (\+|-)*{DIGIT}+(\.{1})?{DIGIT}+
                   }
                }
 
-{MULTILINE}  { return TOKEN_MULT; }
+{MULTILINE}  {  printf("\nTOKEN_COMMENT %s",yytext);}
 
 
-{NUMBER}|{DIGIT}   { 
-   yylval.ival = atof(yytext);
-   return TOKEN_NUMBERCONST ;}
+{NUMBER}|{DIGIT}   { return TOKEN_NUMBERCONST ;}
 
-{STRING}       {  strcpy(yylval.xstring,yytext);
-               return TOKEN_STRINGCONST  ;}
+{STRING}       {  return TOKEN_STRINGCONST  ;}
 
 {ARITHMETIC}   {  if(!strcmp(yytext,"+"))
                    return TOKEN_ADD ;

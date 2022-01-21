@@ -2,16 +2,11 @@
 ~ bib.h !
 ~ anotherbib.h !
 
-LET max BE 12 !
-LET min BE 1.5 !
-LET b BE 1 !
-
-
-
-
+LET max BE 10 !
+LET min BE 1 !
 
 function Num fon( Num b,Num a)  [
-b : Num ! 
+b : Num! 
 
 a<-b! 
 return b! 

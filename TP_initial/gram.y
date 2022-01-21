@@ -2,64 +2,24 @@
 	#include <stdio.h>
 	#include <stdlib.h>
 	#include <string.h>
-	#include "liste.h"
-	#include "quad.h"
-	#include "pile.h"
 	//#include "sll.c"
-
-	Elmt ts_main;
-	Elmt ts_lib;
-	quad q;
-	int cmp=0;
-	char ch[10];
-	char t3[10];
-	int t;
-	int qc=0;
-	int buffer; //le quad a buffer
-	int br;
 	extern FILE *yyin;
 	extern FILE *yyout;
 	extern int lineno;
 	extern int err_lex;
 	extern int yylex();
 	void yyerror();
-	pile p1,p2; //pour le IF
-	pile p3; //pour le FOR
-	pile p4,p5;
 %}
-
-%union
-{
-char chaine[100];
-char ch[50];
-char carac;
-struct { char val[100]; float type;}VT;
-char sval[100];
-char id[100];
-char xstring[100];
-float ival;
-}
-
 
 /* token definition */
 %token DIGIT LETTER MULTILINE KEYWORD WHITESPACE STRING ARITHMETIC SIGNS NUMBER TOKEN_VOIDTYPE
 %token TOKEN_NUMTYPE TOKEN_STRTYPE TOKEN_BOOLTYPE VOIDTYPE TOKEN_BEGIN TOKEN_END TOKEN_RETURN TOKEN_FUNCTION TOKEN_IMPORT 
 %token TOKEN_LET TOKEN_BE TOKEN_INTEROGATION TOKEN_FROM TOKEN_TO TOKEN_WITH TOKEN_AS TOKEN_REPEAT TOKEN_PUTIN TOKEN_PUTOUT TOKEN_TYPEDEF TOKEN_TRUE TOKEN_FALSE TOKEN_ELSE
-%token TOKEN_IMPORTID IDENTIFIER TOKEN_WHITESPACE TOKEN_COMMENT 
+%token TOKEN_IMPORTID TOKEN_ID IDENTIFIER TOKEN_WHITESPACE TOKEN_COMMENT 
 %token TOKEN_NUMBERCONST TOKEN_STRINGCONST TOKEN_ARITHMATICOP TOKEN_NOTEQUALOP TOKEN_ASSIGNOP TOKEN_RIGHTPAREN TOKEN_LEFTPAREN TOKEN_RB TOKEN_LB
 %token TOKEN_ANDOP TOKEN_OROP TOKEN_NOTOP TOKEN_CHAMPOP TOKEN_SUPOP TOKEN_INFOP TOKEN_SUPEOP TOKEN_INFEOP TOKEN_EQUALOP 
 %token TOKEN_RCB TOKEN_LCB TOKEN_ENDINSTR TOKEN_COMMA TOKEN_LTB TOKEN_RTB TOKEN_AFFECT 
 %token TOKEN_ADD TOKEN_SUB TOKEN_DIV TOKEN_MULT TOKEN_DOT
-%type<chaine> SIGNS
-%type<chaine> IDENTIFIER
-%token<chaine> TOKEN_ID
-%type<ival> TOKEN_NUMBERCONST
-%type<chaine> names
-%type<chaine> type
-%type<chaine> TOKEN_NUMTYPE
-%type<chaine> variable
-%type<chaine> TOKEN_IMPORTID
-%type<ival> expression
 
 %start program
 
@@ -67,55 +27,34 @@ float ival;
 
 %%
 
-program: structure { printf("\n FIN DE PROGRAMME AVEC SUCCESS \n");
-printf("la table des symboles: \n"); affiche_liste(ts_main); affiche_q(q); exit(0); };
+program: structure { printf("\n FIN DE PROGRAMME AVEC SUCCESS \n");};
 
 structure: import define declarations fonctions TOKEN_BEGIN TOKEN_LB declarations instructions TOKEN_RB TOKEN_END
 
 /* DECLARATION */
 
-import: import TOKEN_IMPORT TOKEN_IMPORTID TOKEN_ENDINSTR { 
-				if(recherche(ts_lib,$3)==1) {
-				printf("Import avec succes ligne %d\n", lineno);
-				ts_lib=inser(ts_lib,$3,"lib",0);
-				}
-			else printf(" %s: librairie déja importée\n",$3);
-			}
-
+import: import TOKEN_IMPORT TOKEN_IMPORTID TOKEN_ENDINSTR {printf("import avec succes ligne %d\n", lineno);}
 | ;
-define:   define TOKEN_LET TOKEN_ID TOKEN_BE TOKEN_NUMBERCONST TOKEN_ENDINSTR {
-	/* Regles Symantiques    ***************** ICI *************** */
-			if(recherche(ts_main,$3)==1) {
-				printf("define avec succes ligne %d\n", lineno);
-				ts_main=inser(ts_main,$3,"Num",$5);
-				}
-			else printf(" %s: nom de variable déja utilisé\n",$3);
-		}
+define:   define TOKEN_LET TOKEN_ID TOKEN_BE TOKEN_NUMBERCONST TOKEN_ENDINSTR {printf("define avec succes ligne %d\n", lineno);}
 
-		|   
+        |
 ;
 declarations: declarations declaration | declaration | /* vide */ ;
 
-declaration: names TOKEN_AFFECT type TOKEN_ENDINSTR 				{printf(" declaration avec success a la ligne %d\n", lineno);
-		/* Regles Symantiques    ***************** ICI *************** */
-		if(recherche(ts_main,$1) == 1){
-		ts_main=inser(ts_main,$1,$3,0);}
-		else printf(" %s: nom de variable déja utilisé\n",$1);
-
-		}
-	
+declaration: names TOKEN_AFFECT type TOKEN_ENDINSTR 				{printf(" declaration avec success a la ligne %d\n", lineno);}
 	| TOKEN_TYPEDEF TOKEN_ID TOKEN_LB declarations TOKEN_RB TOKEN_ENDINSTR	{printf(" \n structure declaration avec success a la ligne %d\n", lineno);}
     |  names TOKEN_AFFECT type array TOKEN_ENDINSTR
 ;
 
-type: TOKEN_NUMTYPE		{strcpy($$, "Num");}
-	| TOKEN_STRTYPE 		{ strcpy($$, "Str");}
-	| TOKEN_BOOLTYPE 	{ strcpy($$, "Bool");}
+type: TOKEN_NUMTYPE 		{ printf("\n number integer/float/double");}
+	| TOKEN_STRTYPE 		{ printf("\n string ");}
+	| TOKEN_BOOLTYPE 	{ printf("\n boolean");}
 ;
 
-names: variable  | names TOKEN_COMMA variable;
 
-variable: TOKEN_ID  | TOKEN_ID array   ;
+names: variable | names TOKEN_COMMA variable;
+
+variable: TOKEN_ID | TOKEN_ID array ;
 
 array: array TOKEN_INFOP TOKEN_SUPOP | TOKEN_INFOP TOKEN_SUPOP ;
 
@@ -171,40 +110,22 @@ repeat_instruction: TOKEN_AS TOKEN_LB corps TOKEN_RB TOKEN_REPEAT TOKEN_LEFTPARE
 corps: instruction | TOKEN_LB instructions TOKEN_RB ;
 
 expression:
-    expression TOKEN_ADD expression 
-	{$$ = $1 + $3;}
+    expression TOKEN_ADD expression 	
 	|expression TOKEN_SUB expression 	
-	{$$ = $1 - $3;}
 	|expression TOKEN_MULT expression 	
-	{$$ = $1 * $3;}
-	|expression TOKEN_DIV expression 
-	{  if($3==0) {printf("\n division par 0 a la ligne %d\n", lineno);}
-		else {$$ = $1 / $3;}	
-	}	
+	|expression TOKEN_DIV expression 	
 	|expression TOKEN_OROP expression 
-	{$$ = $1 || $3;}
 	|expression TOKEN_ANDOP expression 
-	{$$ = $1 && $3;}
 	|TOKEN_NOTOP expression 
-	{$$ = !$2;}
-	|expression TOKEN_EQUALOP expression 
-	{$$ = $1 == $3;}
+	|expression TOKEN_EQUALOP expression 	
 	|expression TOKEN_NOTEQUALOP expression 
-	{$$ = $1 != $3;}
 	|expression TOKEN_SUPOP expression 
-	{$$ = $1 > $3;}
 	|expression TOKEN_INFOP expression 
-	{$$ = $1 < $3;}
 	|expression TOKEN_SUPEOP expression 
-	{$$ = $1 >= $3;}
 	|expression TOKEN_INFEOP expression 
-	{$$ = $1 <= $3;}
 	|TOKEN_LEFTPAREN expression TOKEN_RIGHTPAREN 
-	{$$ = $2;}
 	|variable 	
-	{$$ = $1;}
-	|TOKEN_NUMBERCONST	
-	{$$ = $1;}
+	| 		TOKEN_NUMBERCONST			
 	|fonction_call
     |write
     |read

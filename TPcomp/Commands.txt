@@ -9,3 +9,8 @@ flex -o lexic.c prg.l && \
 bison -d prg.y && \
 gcc -o compiler.out lexic.c prg.tab.c && \
 ./compiler.out
+
+flex -o lexic.c Flex.l && \
+bison -d bison.y && \
+gcc -o compiler.out lexic.c bison.tab.c && \
+./compiler.out

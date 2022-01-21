@@ -59,12 +59,15 @@ return p;
 void affiche_liste(Elmt l)
 {   printf("******************************************\n");
 
+  printf("    ------------      ------          ----------  \n");
+  printf("       Name            Type             Value    \n");
+  printf("    ------------      ------          ----------\n");
 
     while(l!=NULL)
     {  
-        printf("         [%s]",l->token);
-        printf("         [%s]",l->type);
-        printf("         [%f]",l->value);
+        printf("       [%s]",l->token);
+        printf("       [%s]",l->type);
+        printf("       [%f]",l->value);
         printf("\n");
 
         l=l->svt;
@@ -129,32 +132,6 @@ tete=tete->svt;
 
 }
 
-
-
-
-
-
-/*
-int main()
-{
-Elmt tete;int n; char nom[20];
-tete=ajoute_tete(tete,"anis",2);
-tete=inser_apr(tete,"nano",20);
-
-tete=inser_apr(tete,"test",25);
-tete=inser_apr(tete,"electra",33);
-tete=inser_apr(tete,"steve",12);
-
-afflist(tete);
-
-
-recherche(tete,"steve");
-
-
-
-    return 0;
-}
-*/
 
 
 

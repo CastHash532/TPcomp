@@ -430,7 +430,7 @@ return 1;
 int main()
 {
 //yydebug=1;
-yyin=fopen("code2.txt","r");
+//yyin=fopen("code2.txt","r");
 yyparse();
 return 0;
 }
